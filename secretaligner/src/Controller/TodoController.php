@@ -6,6 +6,7 @@ use App\Entity\Todo;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 class TodoController extends Controller
 {
@@ -33,15 +34,15 @@ class TodoController extends Controller
     }
 
     /**
-     * @Route("/todoExample", name="create_example_todo")
+     * @Route("/todo-create", name="create_todo")
      */
-    public function createTodo(): Response
+    public function create(Request $request): Response
     {
         $entityManager = $this->getDoctrine()->getManager();
         $todo = new Todo();
 
-        $todo->setNombre('Tareas Ejemplo');
-        $todo->setFechaTope(new \DateTime("2021-02-28"));
+        $todo->setNombre($request->request->get('nombre'));
+        $todo->setFechaTope(new \DateTime($request->request->get('fecha_tope')));
         $todo->setEstado('pendiente');
 
         $entityManager->persist($todo);
@@ -51,9 +52,7 @@ class TodoController extends Controller
             'id' => $todo->getId(),
         ]);
     }
-    function get_finished_todo($value){
-        return $value->getEstado() == "finalizado";
-    }
+    
     /**
      * @Route("/todo-list", name="todo_list")
      */
@@ -74,7 +73,7 @@ class TodoController extends Controller
     }
 
     /**
-     * @Route("/todo/edit/{id}")
+     * @Route("/todo-finish/{id}")
      */
     public function finish_todo_task(int $id): Response
     {
@@ -93,6 +92,11 @@ class TodoController extends Controller
         return $this->redirectToRoute('todo_list');
     }
 
+    /**
+     * PRIVATE FUNCTIONS
+     */
 
-    
+    private function get_finished_todo($value){
+        return $value->getEstado() == "finalizado";
+    }
 }
