@@ -234,8 +234,29 @@
     "symfony/stopwatch": {
         "version": "v3.4.47"
     },
+    "symfony/twig-bridge": {
+        "version": "v3.4.47"
+    },
+    "symfony/twig-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "7e5381cd17e0e27d1b432af9230b65060b75ac4c"
+        },
+        "files": [
+            "./config/packages/test/twig.yaml",
+            "./config/packages/twig.yaml",
+            "./config/routes/dev/twig.yaml",
+            "./templates/base.html.twig"
+        ]
+    },
     "symfony/yaml": {
         "version": "v3.4.47"
+    },
+    "twig/twig": {
+        "version": "v2.14.3"
     },
     "webimpress/safe-writer": {
         "version": "2.1.0"
