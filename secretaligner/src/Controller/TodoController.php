@@ -51,15 +51,48 @@ class TodoController extends Controller
             'id' => $todo->getId(),
         ]);
     }
-
+    function get_finished_todo($value){
+        return $value->getEstado() == "finalizado";
+    }
     /**
-     * @Route("/todo-list")
+     * @Route("/todo-list", name="todo_list")
      */
     public function showAll(): Response{
         $repository = $this->getDoctrine()->getRepository(Todo::class);
         $todoList = $repository->findAll();
+        $todoFinished = array_filter($todoList, array($this, 'get_finished_todo'));
+        //$resultado = array_diff($todoList, $todoFinished);
+        $todoPending = array_udiff($todoList, $todoFinished,
+          function ($obj_a, $obj_b) {
+            return $obj_a->getEstado() != $obj_b->getEstado();
+          }
+        );
+
         return $this->render('list_todo.html.twig', [
-            'todoList' => $todoList,
+            'todoFinished' => $todoFinished, 'todoPending'=>$todoPending
         ]);
     }
+
+    /**
+     * @Route("/todo/edit/{id}")
+     */
+    public function finish_todo_task(int $id): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $todo = $entityManager->getRepository(Todo::class)->find($id);
+
+        if (!$todo) {
+            throw $this->createNotFoundException(
+                'No todo found for id '.$id
+            );
+        }
+
+        $todo->setEstado('finalizado');
+        $entityManager->flush();
+
+        return $this->redirectToRoute('todo_list');
+    }
+
+
+    
 }
