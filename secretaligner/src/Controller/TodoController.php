@@ -7,30 +7,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Security;
 
 class TodoController extends Controller
 {
-    /**
-     * @Route("/todo", name="todo")
-     */
-    public function index(): Response
+    public function __construct(Security $security)
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/TodoController.php',
-        ]);
-    }
-
-    /**
-     * @Route("/lucky/number")
-     */
-    public function numberAction()
-    {
-        $number = random_int(0, 100);
-
-        return $this->render('lucky/number.html.twig', [
-            'number' => $number,
-        ]);
+        $this->user = $security->getUser();
+        $this->role = $this->user->getRoles()[0];
     }
 
     /**
@@ -58,14 +42,20 @@ class TodoController extends Controller
      */
     public function showAll(): Response{
         $repository = $this->getDoctrine()->getRepository(Todo::class);
-        $todoList = $repository->findAll();
+
+        if($this->role == 'ROLE_ADMIN'){
+            $todoList = $repository->findAll();
+        } else {
+            $todoList = $repository->findTodoByUser($this->user->getUsername());
+        }
+        
         $todoFinished = array_filter($todoList, array($this, 'get_finished_todo'));
-        //$resultado = array_diff($todoList, $todoFinished);
         $todoPending = array_udiff($todoList, $todoFinished,
           function ($obj_a, $obj_b) {
             return $obj_a->getEstado() != $obj_b->getEstado();
           }
         );
+
 
         return $this->render('list_todo.html.twig', [
             'todoFinished' => $todoFinished, 'todoPending'=>$todoPending

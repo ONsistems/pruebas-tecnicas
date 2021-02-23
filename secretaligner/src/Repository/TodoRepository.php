@@ -47,4 +47,14 @@ class TodoRepository extends ServiceEntityRepository
         ;
     }
     */
+   
+    public function findTodoByUser($value)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.assignUser = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }
