@@ -9,13 +9,15 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Psr\Log\LoggerInterface;
 
 class TodoController extends Controller
 {
-    public function __construct(Security $security)
+    public function __construct(Security $security, LoggerInterface $logger)
     {
         $this->user = $security->getUser();
         $this->role = $this->user->getRoles()[0];
+        $this->logger = $logger;
     }
 
     /**
@@ -33,6 +35,7 @@ class TodoController extends Controller
         $entityManager->persist($todo);
         $entityManager->flush();
 
+        $this->logger->info('Has creado correctament la terea: '.$todo->getId());
         return $this->render('create_todo.html.twig', [
             'id' => $todo->getId(),
         ]);
@@ -57,7 +60,7 @@ class TodoController extends Controller
           }
         );
 
-
+        $this->logger->info('Listado ToDo');
         return $this->render('list_todo.html.twig', [
             'todoFinished' => $todoFinished, 'todoPending'=>$todoPending
         ]);
@@ -80,6 +83,7 @@ class TodoController extends Controller
         $todo->setEstado('finalizado');
         $entityManager->flush();
 
+        $this->logger->info('La tarea'.$todo->getId().' ha sido finalizada');
         return $this->redirectToRoute('todo_list');
     }
 
@@ -105,6 +109,8 @@ class TodoController extends Controller
         $todo->setAssignUser($request->request->get('selected'));
         $entityManager->flush();
 
+        $this->logger->info('Se ha asignado el usuario '.$request->request->get('selected').' a la tarea '.$request->request->get('todoId'));
+
         $response = new JsonResponse();
         $response->setStatusCode(200);
         $response->setData(array(
@@ -127,7 +133,7 @@ class TodoController extends Controller
             return $obj_a->getEstado() != $obj_b->getEstado();
           }
         );
-
+         $this->logger->info('La lista ToDo del usuario: '.$user);
         return $this->render('list_todo_user.html.twig', [
             'todoFinished' => $todoFinished, 'todoPending'=>$todoPending
         ]);
