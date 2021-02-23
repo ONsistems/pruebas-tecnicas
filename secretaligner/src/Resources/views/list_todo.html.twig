@@ -26,7 +26,15 @@
 	<td>{{ todo.nombre }}</td>
 	<td>{{ todo.getFechaCreacion()|date("Y-m-d H:i:s") }}</td>
 	<td>{{ todo.getFechaTope()|date("Y-m-d H:i:s") }}</td>
-	<td>{{ todo.estado }}</td>
+	<td>
+		{{ todo.estado }}
+		{% if is_granted('ROLE_USER') %}
+			{% if todo.estado != 'finalizado' %} 
+				<button class="btn btn-primary" onclick="finishTask($(this))" data-todoId="{{ todo.id }}">Finalizar Tarea</button>
+			{% endif %}
+			
+		{% endif %}
+	</td>
 	{% if is_granted('ROLE_ADMIN') %}
 	<td>
 		{% if todo.estado == 'finalizado' %} 
@@ -38,11 +46,7 @@
 				<option value="filemon" {% if todo.assignUser == "filemon" %}selected{% endif %}>filemon</option>
 			</select>
 		{% endif %}
-	</td>
-	{% else %}
-		{% if todo.estado != 'finalizado' %} 
-			<td><button class="btn btn-primary" onclick="finishTask($(this))" data-todoId="{{ todo.id }}">Finalizar Tarea</button></td>
-		{% endif %}
+	</td>		
 	{% endif %}
 </tr>
 {% endblock %}

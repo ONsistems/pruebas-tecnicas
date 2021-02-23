@@ -52,14 +52,17 @@ class TodoController extends Controller
         } else {
             $todoList = $repository->findTodoByUser($this->user->getUsername());
         }
-        
-        $todoFinished = array_filter($todoList, array($this, 'get_finished_todo'));
-        $todoPending = array_udiff($todoList, $todoFinished,
-          function ($obj_a, $obj_b) {
-            return $obj_a->getEstado() != $obj_b->getEstado();
-          }
-        );
 
+        $todoFinished = [];
+        $todoPending = [];
+        foreach ($todoList as $key => $element) {
+            if($element->getEstado() == 'finalizado'){
+                array_push($todoFinished, $element);
+            } else {
+                array_push($todoPending, $element);
+            }
+        }
+        
         $this->logger->info('Listado ToDo');
         return $this->render('list_todo.html.twig', [
             'todoFinished' => $todoFinished, 'todoPending'=>$todoPending
@@ -135,7 +138,7 @@ class TodoController extends Controller
             return $obj_a->getEstado() != $obj_b->getEstado();
           }
         );
-         $this->logger->info('La lista ToDo del usuario: '.$user);
+        $this->logger->info('La lista ToDo del usuario: '.$user);
         return $this->render('list_todo_user.html.twig', [
             'todoFinished' => $todoFinished, 'todoPending'=>$todoPending
         ]);
