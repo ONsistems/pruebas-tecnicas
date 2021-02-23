@@ -7,6 +7,9 @@
     		<th>Fecha Creacion</th>
     		<th>Fecha Tope</th>
     		<th>Estado</th>
+    		{% if is_granted('ROLE_ADMIN') %}
+    			<th>Usuario Asignado</th>
+    		{% endif %}
     	</tr>
     	{% for todo in todoFinished %}
 	        {{ block('todoList') }}
@@ -24,5 +27,28 @@
 	<td>{{ todo.getFechaCreacion()|date("Y-m-d H:i:s") }}</td>
 	<td>{{ todo.getFechaTope()|date("Y-m-d H:i:s") }}</td>
 	<td>{{ todo.estado }}</td>
+	{% if is_granted('ROLE_ADMIN') %}
+	<td>
+		{% if todo.estado == 'finalizado' %} 
+			{{ todo.assignUser }}
+		{% else %}
+			<select name="assignUser" id="assignUser" data-todoId="{{ todo.id }}" onchange="assignUser($(this))">
+				<option value="" selected disabled hidden>Elige Usaurio</option>
+				<option value="mortadelo" {% if todo.assignUser == "mortadelo" %}selected{% endif %}>mortadelo</option>
+				<option value="filemon" {% if todo.assignUser == "filemon" %}selected{% endif %}>filemon</option>
+			</select>
+		{% endif %}
+	</td>
+	{% endif %}
 </tr>
+{% endblock %}
+
+{% block footer %}
+<script>
+	function assignUser(element){
+		var todoId = element.data('todoid');
+		var selected = element.val();
+		$.post("{{ path('todo_assignUser') }}",{todoId,selected}).done(function(data){ alert('Nuevo usuario aginado correctemente') }).fail(function(data){alert('Ha habido una error inesperado. Consulte la consola')})
+	}
+</script>
 {% endblock %}
