@@ -38,6 +38,11 @@ class Todo
      */
     private $estado;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $assignUser;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -97,5 +102,17 @@ class Todo
     public function doStuffOnPrePersist()
     {
         $this->fecha_creacion = new \DateTime();
+    }
+
+    public function getAssignUser(): ?string
+    {
+        return $this->assignUser;
+    }
+
+    public function setAssignUser(?string $assignUser): self
+    {
+        $this->assignUser = $assignUser;
+
+        return $this;
     }
 }
