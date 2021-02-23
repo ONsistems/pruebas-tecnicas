@@ -57,4 +57,16 @@ class TodoRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findPendingTodoByUser($value)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.estado = :state')
+            ->andWhere('t.assignUser = :val')
+            ->setParameter('state','pendiente')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

@@ -83,6 +83,8 @@ class TodoController extends Controller
         $todo->setEstado('finalizado');
         $entityManager->flush();
 
+        $this->checkTaskAndMail();
+
         $this->logger->info('La tarea'.$todo->getId().' ha sido finalizada');
         return $this->redirectToRoute('todo_list');
     }
@@ -138,6 +140,24 @@ class TodoController extends Controller
             'todoFinished' => $todoFinished, 'todoPending'=>$todoPending
         ]);
     }
+
+    public function checkTaskAndMail()
+    {
+        $username = $this->user->getUsername();
+        $repository = $this->getDoctrine()->getRepository(Todo::class);
+        $todoList = $repository->findPendingTodoByUser($username);
+
+        if(count($todoList) == 0){
+            $message = (new \Swift_Message())
+              ->setSubject('Tareas Finalizadas')
+              ->setFrom('no-reply@admin.es')
+              ->setTo($username."@tia.es")
+              ->setBody('El agente <b>'.$username.'</b> has finalizado con exito todas sus tareas.<br>Esta a la espera de nuevas instruciones');
+            $this->get('mailer')->send($message);
+        }
+        return null;
+    }
+
 
     /**
      * PRIVATE FUNCTIONS
