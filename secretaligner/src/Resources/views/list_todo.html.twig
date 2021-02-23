@@ -39,6 +39,10 @@
 			</select>
 		{% endif %}
 	</td>
+	{% else %}
+		{% if todo.estado != 'finalizado' %} 
+			<td><button class="btn btn-primary" onclick="finishTask($(this))" data-todoId="{{ todo.id }}">Finalizar Tarea</button></td>
+		{% endif %}
 	{% endif %}
 </tr>
 {% endblock %}
@@ -49,6 +53,15 @@
 		var todoId = element.data('todoid');
 		var selected = element.val();
 		$.post("{{ path('todo_assignUser') }}",{todoId,selected}).done(function(data){ alert('Nuevo usuario aginado correctemente') }).fail(function(data){alert('Ha habido una error inesperado. Consulte la consola')})
+	}
+
+	function finishTask(element){
+		if(confirm('¿Deseas finalizar la tarea?')){
+			var todoId = element.data('todoid');
+			$.post("/todo-finish/"+todoId).done(function(){
+				location.reload();
+			})
+		}
 	}
 </script>
 {% endblock %}
