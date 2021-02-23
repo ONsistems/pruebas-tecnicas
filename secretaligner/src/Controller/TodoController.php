@@ -101,7 +101,7 @@ class TodoController extends Controller
             return $response;
 
         }
-        
+
         $todo->setAssignUser($request->request->get('selected'));
         $entityManager->flush();
 
@@ -111,6 +111,26 @@ class TodoController extends Controller
             'response' => 'success'
         ));
         return $response;
+    }
+
+    /**
+     * @Route("/todo-list-user/{user}", name="todo_list_user")
+     */
+    public function showAllUser(string $user): Response{
+        $repository = $this->getDoctrine()->getRepository(Todo::class);
+        $todoList = $repository->findTodoByUser($user);
+        
+        
+        $todoFinished = array_filter($todoList, array($this, 'get_finished_todo'));
+        $todoPending = array_udiff($todoList, $todoFinished,
+          function ($obj_a, $obj_b) {
+            return $obj_a->getEstado() != $obj_b->getEstado();
+          }
+        );
+
+        return $this->render('list_todo_user.html.twig', [
+            'todoFinished' => $todoFinished, 'todoPending'=>$todoPending
+        ]);
     }
 
     /**

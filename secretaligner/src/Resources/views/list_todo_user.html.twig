@@ -1,0 +1,29 @@
+{% extends "main.html.twig" %}
+
+{% block content %}
+    <table class="table table-striped">
+    	<tr>
+    		<th>Nombre</th>
+    		<th>Fecha Creacion</th>
+    		<th>Fecha Tope</th>
+    		<th>Estado</th>
+    	</tr>
+    	{% for todo in todoFinished %}
+	        {{ block('todoList') }}
+	    {% endfor %}
+	    {% for todo in todoPending %}
+	        {{ block('todoList') }}
+	    {% endfor %}
+
+    </table>
+{% endblock %}
+
+{% block todoList %}
+<tr>
+	<td>{{ todo.nombre }}</td>
+	<td>{{ todo.getFechaCreacion()|date("Y-m-d H:i:s") }}</td>
+	<td>{{ todo.getFechaTope()|date("Y-m-d H:i:s") }}</td>
+	<td>{{ todo.estado }}</td>
+</tr>
+{% endblock %}
+
