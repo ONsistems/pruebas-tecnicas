@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class TodoController extends Controller
 {
@@ -80,6 +81,36 @@ class TodoController extends Controller
         $entityManager->flush();
 
         return $this->redirectToRoute('todo_list');
+    }
+
+    /**
+     * @Route("/todo-assignUser",name="todo_assignUser")
+     */
+    public function assignUser_todo_task(Request $request)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $todo = $entityManager->getRepository(Todo::class)->find($request->request->get('todoId'));
+        
+
+        if (!$todo) {
+            $response = new JsonResponse();
+            $response->setStatusCode(404);
+            $response->setData(array(
+                'response' => 'No todo found for id '.$request->request->get('todoId')
+            ));
+            return $response;
+
+        }
+        
+        $todo->setAssignUser($request->request->get('selected'));
+        $entityManager->flush();
+
+        $response = new JsonResponse();
+        $response->setStatusCode(200);
+        $response->setData(array(
+            'response' => 'success'
+        ));
+        return $response;
     }
 
     /**
