@@ -35,7 +35,7 @@ php bin/console doctrine:schema:update --force
    - Difultad: Facil
    - [Pull Request](https://github.com/ONsistems/pruebas-tecnicas/pull/6)
 7. Añadir login y autenticar la aplicación. Crear un rol admin para gestionar todos las listas. Un rol usuario accederá únicamente a su lista. 
-   - Duración: 3 horas
+   - Duración: 5 horas
    - Difultad: Muy Dificil
    - [Pull Request](https://github.com/ONsistems/pruebas-tecnicas/pull/7)
 8. Añadir para un usuario con rol admin la posibilidad de modificar el dueño de la lista, pudiendo un usuario tener varias listas de TODO 
