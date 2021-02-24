@@ -27,7 +27,7 @@ php bin/console doctrine:schema:update --force
    - Difultad: Media
    - [Pull Request](https://github.com/ONsistems/pruebas-tecnicas/pull/4)
 5. Crear un comando de Symfony para añadir elementos a la lista por terminal
-   - Duración: 1 hora 30 minutos
+   - Duración: 2 horas
    - Difultad: Dificil
    - [Pull Request](https://github.com/ONsistems/pruebas-tecnicas/pull/5)
 6. Modificar la interfaz realizada en el punto 3 para realizar las modificaciones por ajax
