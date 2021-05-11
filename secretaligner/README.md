@@ -8,6 +8,7 @@ git clone [..]
 composer udpate
 php bin/console doctrine:database:create
 php bin/console doctrine:schema:update --force
+symfony server:start
 ```
 ### Lista de tarea
 1. Crear estructura para proyecto symfony 3.4 
